@@ -35,7 +35,7 @@ public class SockServerService {
 		return this.clientSocks;
 	}
 	
-	public boolean startInComingConnections() throws BindException{
+	public boolean listen() throws BindException{
 		try {
 			this.flagInComConn = true;
 			serverSock = new ServerSocket(this.sockConfig.getPort());

@@ -60,7 +60,7 @@ public class IOSocket {
 					}
 				}catch(ClassNotFoundException e) {
 					logger.error("Error al parsear el mensaje de entrada", e);
-					e.printStackTrace();
+					//e.printStackTrace();
 					
 				}catch(IOException e) {
 					//e.printStackTrace();				
