@@ -9,7 +9,7 @@ public static void main(String [] args) throws IOException, InterruptedException
 	SockLogger.autoConfigure(); //Required for the Logger
 		
 	SockServerService server = new SockServerService(new SockConfig(951)); //Initialize your server socket service
-	server.startInComingConnections(); //Start thread for incoming connections
+	server.listen(); //Start thread for incoming connections
 	
 	server.getClientMessagesObserver().subscribe((message) -> { //message = MessageWrapper object.
 		System.out.println(message); //Print messages incoming from clients
