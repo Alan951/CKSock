@@ -53,22 +53,20 @@
 			</chainedmapper>
 		</mapper>
 	</pathconvert>
-
+	<!--
 	<target name="copy-dependencies">
 		<copy todir="${dist.lib.dir}">
 			<fileset dir="${lib.dir}" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
 		</copy>
 	</target>
-
+	-->
 	<!-- jar it, and declares the ext libraries in manifest.mf file -->
-	<target name="jar" depends="compile, copy-dependencies" description="package, output to JAR">
+	<target name="jar" depends="compile" description="package, output to JAR">
 
 		<echo message="classpath.name : ${classpath.name} " />
 
 		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${dist.lib.dir}" />
-		
-		 
+		<!--<mkdir dir="${dist.lib.dir}" />-->
 
 		<jar jarfile="${dist.dir}/${projectName}.jar" basedir="${build.dir}">
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
