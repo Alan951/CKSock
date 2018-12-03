@@ -19,7 +19,7 @@ public class TestConnections {
 		int cantidad = 6000;
 		
 		SockServerService sss = new SockServerService(new SockConfig(951));
-		sss.startInComingConnections();
+		sss.listen();
 		
 		
 		sss.getClientMessagesObserver().subscribe((message) -> {
