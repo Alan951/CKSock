@@ -23,4 +23,5 @@ public static void main(String [] args) throws IOException, InterruptedException
 ```
 
 #### TODO List
-- [ ] Clients can sned message to other(s) client(s) with internal router (actually you need implement it)
+- [ ] Clients can send message to other(s) client(s) with internal router (actually you need implement it)
+- [ ] Add option to send message in JSON format.
