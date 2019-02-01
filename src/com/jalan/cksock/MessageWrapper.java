@@ -1,22 +1,31 @@
 package com.jalan.cksock;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class MessageWrapper implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
+	private UUID uuid;
+	private UUID responseOf;
 	private Object payload;
 	private transient SockService source;
 	private transient SockService destination;
 	
+	public MessageWrapper() {
+		this.uuid = UUID.randomUUID();
+	}
+	
 	public MessageWrapper(Object payload, SockService source, SockService destination) {
+		this();
 		this.payload = payload;
 		this.source = source;
 		this.destination = destination;
 	}
 	
 	public MessageWrapper(Object payload, SockService source) {
+		this();
 		this.payload = payload;
 		this.source = source;
 	}
@@ -43,6 +52,18 @@ public class MessageWrapper implements Serializable{
 	
 	public void setDestination(SockService destination) {
 		this.destination = destination;
+	}
+
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public UUID getResponseOf() {
+		return responseOf;
+	}
+
+	public void setResponseOf(UUID responseOf) {
+		this.responseOf = responseOf;
 	}
 
 	@Override
