@@ -7,6 +7,7 @@ public class SockConfig {
 	public boolean attemptConnect;
 	public int attemptTimes;
 	public boolean autoConnect;
+	public boolean useJson;
 	
 	public static final int SERVER_MODE = 0;
 	public static final int CLIENT_MODE = 1;
@@ -35,6 +36,14 @@ public class SockConfig {
 		this.connMode = CLIENT_MODE;
 	}
 	
+	public boolean isUseJson() {
+		return useJson;
+	}
+
+	public void setUseJson(boolean useJson) {
+		this.useJson = useJson;
+	}
+
 	public String getAddress() {
 		return address;
 	}

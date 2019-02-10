@@ -195,6 +195,10 @@ public class SockService {
 		return this.logger;
 	}
 
+	public SockConfig getConf() {
+		return conf;
+	}
+
 	@Override
 	public String toString() {
 		return "SockService [id=" + id + ", remoteIp=" + this.socket.getRemoteSocketAddress() + "]";

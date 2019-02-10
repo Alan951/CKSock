@@ -13,15 +13,15 @@ import org.apache.log4j.Logger;
 import rx.subjects.PublishSubject;
 
 public class SockServerService {
+	
 	private ServerSocket serverSock;
+	private SockConfig sockConfig;
 	
 	private List<SockService> clientSocks;
 	
 	private PublishSubject<MessageWrapper> observerClientMessages;
 	
 	private boolean flagInComConn;
-	
-	private SockConfig sockConfig;
 	
 	private Logger logger = Logger.getLogger(SockServerService.class);
 	
@@ -53,6 +53,14 @@ public class SockServerService {
 						Socket socket = serverSock.accept();
 						
 						SockService sockService = new SockService();
+						
+						if(this.sockConfig.isUseJson()) {
+							SockConfig conf = new SockConfig();
+							conf.setUseJson(true);
+							
+							sockService.setConfig(conf);
+						}
+						
 						sockService.setSocket(socket);
 						sockService.setId(idAI);
 						

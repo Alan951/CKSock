@@ -6,6 +6,9 @@ import java.io.ObjectOutputStream;
 
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class IOSocket {
 	private SockService service;
 	
@@ -55,7 +58,15 @@ public class IOSocket {
 				try {
 					logger.info("waiting for messaged");
 					
-					while((inMessage = this.ois.readObject() ) != null) {						
+					while((inMessage = this.ois.readObject() ) != null) {
+						logger.debug("InMessage IOSOCKET: " + inMessage);
+						
+						if(this.service.getConf() != null && this.service.getConf().isUseJson() && inMessage instanceof String) {
+							Gson gson = new Gson();
+							
+							inMessage = gson.fromJson((String)inMessage, MessageWrapper2.class);							
+						}
+						
 						service.inComingData(inMessage);
 					}
 				}catch(ClassNotFoundException e) {
@@ -84,7 +95,13 @@ public class IOSocket {
 	
 	public void sendData(Object data) throws IOException {
 		logger.debug("sendData invoked: " + data);
+		
+		this.oos.writeObject(data);
+	}
 	
+	public void sendData(MessageWrapper2<?> data) throws IOException {
+		logger.debug("sendData invoked: " + data);
+		
 		this.oos.writeObject(data);
 	}
 	
