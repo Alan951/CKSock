@@ -54,7 +54,7 @@ public class SockService {
 							attempts++;
 						
 						if(conf.attemptTimes == -1 || attempts <= conf.attemptTimes - 1) {	
-							Thread.sleep(1000 * 3);
+							Thread.sleep(1000 * 3); //Tiempo de espera para el siguiente intento
 								
 						}else {
 							logger.warn("Can't connect to server");
@@ -95,13 +95,13 @@ public class SockService {
 		this.ioSocket = new IOSocket(this);
 		this.ioSocket.start();
 		
-		logger.info("onConnected invoked");
+		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
 		
 		this.observerConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, this));
 	}
 	
 	private void onDisconnected() throws IOException {
-		logger.info("onDisconnected invoked");
+		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onDisconnected invoked");
 		
 		this.observerConnection.onNext(new ConnectionStatus(SockService.DISCONNECTED_STATUS, this));
 		
@@ -116,7 +116,7 @@ public class SockService {
 	public boolean close() throws IOException{
 		this.observerMessages.onCompleted();
 		
-		logger.info("onClose invoked");
+		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onClose invoked");
 		
 		try {
 		

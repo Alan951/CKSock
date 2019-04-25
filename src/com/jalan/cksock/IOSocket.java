@@ -56,7 +56,7 @@ public class IOSocket {
 			
 			while(this.flagOis) { //While thread is up
 				try {
-					logger.info("waiting for messaged");
+					logger.info("waiting for messages");
 					
 					while((inMessage = this.ois.readObject() ) != null) {
 						logger.debug("InMessage IOSOCKET: " + inMessage);

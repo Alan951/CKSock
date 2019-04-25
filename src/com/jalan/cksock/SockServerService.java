@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.rmi.server.SocketSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ public class SockServerService {
 	private List<SockService> clientSocks;
 	
 	private PublishSubject<MessageWrapper> observerClientMessages;
+	private PublishSubject<ConnectionStatus> observerClientConnection = PublishSubject.create();
 	
 	private boolean flagInComConn;
 	
@@ -52,12 +55,19 @@ public class SockServerService {
 					try {
 						Socket socket = serverSock.accept();
 						
+						if(!flagInComConn)
+							continue;
+						
 						SockService sockService = new SockService();
 						
 						if(this.sockConfig.isUseJson()) {
 							SockConfig conf = new SockConfig();
 							conf.setUseJson(true);
 							
+							sockService.setConfig(conf);
+						}else {
+							SockConfig conf = new SockConfig();
+							conf.setConnMode(-1);
 							sockService.setConfig(conf);
 						}
 						
@@ -72,15 +82,28 @@ public class SockServerService {
 						sockService.getConnectionObserver()
 							.filter((evt) -> evt.status.equals(SockService.DISCONNECTED_STATUS))
 							.subscribe((evt) -> {
+								
+							this.observerClientConnection.onNext(new ConnectionStatus(SockService.DISCONNECTED_STATUS, evt.service));
 							
-							logger.debug("SockClient disconected: " + evt.service);
-							this.clientSocks.remove(evt.service);
+							logger.info((evt.service.getConf() != null ? evt.service.getConf().getConnMode() : "00") + " SockClient disconected: " + evt.service);
+							//this.clientSocks.remove(evt.service);
+							
 						});
 					
 						this.clientSocks.add(sockService);
 						
-						logger.debug("New connection: " + sockService);
+						logger.info("New connection: " + sockService);
 						
+						this.observerClientConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, sockService));
+						
+						//sockService = null;
+						
+					}catch(SocketException e) {
+						if(!e.getMessage().equals("socket closed")) {
+							e.printStackTrace();
+						}
+						
+						this.logger.debug("Socket accept interrupted", e);
 					} catch(IOException e) {
 						e.printStackTrace();
 					}
@@ -101,6 +124,8 @@ public class SockServerService {
 	}
 
 	public void closeAll() {
+		this.logger.info("stopping " + this.clientSocks.size() + " services");
+		
 		this.clientSocks.forEach((client) -> {
 			try {
 				client.close();
@@ -108,6 +133,8 @@ public class SockServerService {
 				e.printStackTrace();
 			}
 		});		
+		
+		this.clientSocks.clear();
 	}
 	
 	public void close(long id) {
@@ -123,11 +150,12 @@ public class SockServerService {
 	}
 	
 	public void stop() {
-		this.closeAll();
-		
 		try {
+			this.logger.info("ServerSocket closed");
 			flagInComConn = false;
 			this.serverSock.close();
+			
+			this.closeAll();
 		}catch(IOException e) {
 			logger.info("Server Socket closed");
 		}
@@ -160,5 +188,9 @@ public class SockServerService {
 	
 	public PublishSubject<MessageWrapper> getClientMessagesObserver(){
 		return this.observerClientMessages;
+	}
+	
+	public PublishSubject<ConnectionStatus> getClientConnectionObserver(){
+		return this.observerClientConnection;
 	}
 }

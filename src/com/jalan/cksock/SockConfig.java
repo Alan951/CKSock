@@ -11,6 +11,7 @@ public class SockConfig {
 	
 	public static final int SERVER_MODE = 0;
 	public static final int CLIENT_MODE = 1;
+	public static final int CLIENT_SERVER_MODE = -1;
 	
 	public SockConfig() {}
 	
