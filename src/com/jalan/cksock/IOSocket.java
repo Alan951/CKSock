@@ -3,6 +3,7 @@ package com.jalan.cksock;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 
 import org.apache.log4j.Logger;
 
@@ -73,8 +74,19 @@ public class IOSocket {
 					logger.error("Error al parsear el mensaje de entrada", e);
 					//e.printStackTrace();
 					
+				}catch(SocketException e) {
+					logger.error((service.getConf() != null ? service.getConf().getConnMode() : "00") + " error " + e);
+					
+					this.flagOis = false;
+					try {
+						this.stop();
+					}catch(IOException ioe) {
+						//e.printStackTrace();
+					}
+					
+					
 				}catch(IOException e) {
-					//e.printStackTrace();				
+					logger.error((service.getConf() != null ? service.getConf().getConnMode() : "00") + " error " + e);		
 					
 					this.flagOis = false;
 					

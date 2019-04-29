@@ -86,7 +86,8 @@ public class SockServerService {
 							this.observerClientConnection.onNext(new ConnectionStatus(SockService.DISCONNECTED_STATUS, evt.service));
 							
 							logger.info((evt.service.getConf() != null ? evt.service.getConf().getConnMode() : "00") + " SockClient disconected: " + evt.service);
-							//this.clientSocks.remove(evt.service);
+							
+							sockService.getConnectionObserver().onCompleted();
 							
 						});
 					
