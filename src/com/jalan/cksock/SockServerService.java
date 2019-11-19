@@ -124,7 +124,7 @@ public class SockServerService {
 	}
 
 	public void closeAll() {
-		this.logger.info("stopping " + this.clientSocks.size() + " services");
+		this.logger.info("stopping " + this.clientSocks.size() + " services: " + this.clientSocks);
 		
 		this.clientSocks.forEach((client) -> {
 			try {
@@ -153,9 +153,11 @@ public class SockServerService {
 		try {
 			this.logger.info("ServerSocket closed");
 			flagInComConn = false;
-			this.serverSock.close();
+			
 			
 			this.closeAll();
+			
+			this.serverSock.close();
 		}catch(IOException e) {
 			logger.info("Server Socket closed");
 		}

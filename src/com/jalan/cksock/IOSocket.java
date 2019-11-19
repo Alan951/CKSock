@@ -79,8 +79,8 @@ public class IOSocket {
 					this.flagOis = false;
 					
 					try {
-						//this.stop(); //Stop streams
-						this.service.close();
+						this.stop(); //Stop streams
+						//this.service.close();
 					}catch(IOException t) {
 						t.printStackTrace();
 					}
@@ -91,6 +91,17 @@ public class IOSocket {
 		});
 		
 		this.oisThread.start();
+	}
+	
+	public void sendJson(Object data) throws IOException{
+		logger.debug("sendJson invoked: " + data );
+		
+		
+	}
+	
+	public void sendJson(MessageWrapper2<?> data) throws IOException {
+		logger.debug("sendJson invoked: " + data );
+		
 	}
 	
 	public void sendData(Object data) throws IOException {
