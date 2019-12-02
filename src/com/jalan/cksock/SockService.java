@@ -3,6 +3,8 @@ package com.jalan.cksock;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import rx.subjects.PublishSubject;
@@ -15,7 +17,8 @@ public class SockService {
 	private Logger logger = Logger.getLogger(SockService.class);
 	
 	private Socket socket;
-	private IOSocket ioSocket;
+	//private IOSocket ioSocket;
+	private IOPlainSocket io;
 	private SockConfig conf;
 	
 	private long id;
@@ -92,16 +95,27 @@ public class SockService {
 			this.logger.debug("NewMessage: " + newMessage);
 		});
 		
-		this.ioSocket = new IOSocket(this);
-		this.ioSocket.start();
+		//this.ioSocket = new IOSocket(this);
+		//this.ioSocket.start();
+		this.io = new IOPlainSocket(this);
+		this.io.start();
 		
-		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
+		if(LogManager.getRootLogger().getLevel().toInt() == Level.DEBUG_INT) {
+			logger.debug((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
+		}else {
+			logger.info("onConnected");
+		}
+		
 		
 		this.observerConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, this));
 	}
 	
 	private void onDisconnected() throws IOException {
-		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onDisconnected invoked");
+		if(LogManager.getRootLogger().getLevel().toInt() == Level.DEBUG_INT) {
+			logger.debug((this.conf != null ? this.conf.getConnMode() : "00") + " onDisconnected invoked");
+		}else {
+			logger.info("onDisconnected");
+		}
 		
 		this.observerConnection.onNext(new ConnectionStatus(SockService.DISCONNECTED_STATUS, this));
 		
@@ -116,11 +130,12 @@ public class SockService {
 	public boolean close() throws IOException{
 		this.observerMessages.onCompleted();
 		
-		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onClose invoked");
+		logger.debug((this.conf != null ? this.conf.getConnMode() : "00") + " onClose invoked");
 		
 		try {
 		
-			this.ioSocket.stop();
+			//this.ioSocket.stop();
+			this.io.stop();
 			this.socket.close();
 			
 			this.onDisconnected();
@@ -156,6 +171,8 @@ public class SockService {
 	}
 	
 	public void inComingData(Object message) {
+		this.logger.debug("ingoming data: " + message );
+		
 		if(message instanceof MessageWrapper) {
 			MessageWrapper messageWrap = (MessageWrapper)message;
 			
@@ -167,16 +184,21 @@ public class SockService {
 		}
 	}
 	
-	public void sendData(Object data) throws IOException {
-		this.ioSocket.sendData(data);
+	public void sendData(String data)  {
+		//this.ioSocket.sendData(data);
+		this.io.sendData(data);
+	}
+	
+	public void sendDataPlz(String data) {
+		this.io.sendData(data);
+	}
+	
+	public void sendData(Object data) {
+		throw new UnsupportedOperationException();
 	}
 	
 	public void sendDataPlz(Object data) {
-		try {
-			this.ioSocket.sendData(data);
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public long getId() {

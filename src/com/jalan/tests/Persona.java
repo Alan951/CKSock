@@ -12,6 +12,8 @@ public class Persona implements Serializable{
 		this.edad = edad;
 	}
 	
+	public Persona() {}
+	
 	public String getNombre() {
 		return nombre;
 	}

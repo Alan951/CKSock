@@ -163,7 +163,7 @@ public class SockServerService {
 		}
 	}
 	
-	public boolean sendAll(Object data) {
+	public boolean sendAll(String data) {
 		for(SockService client : this.clientSocks) {
 			sendData(data, client.getId());
 		}
@@ -171,7 +171,7 @@ public class SockServerService {
 		return true;
 	}
 	
-	public boolean sendData(Object data, long id) {
+	public boolean sendData(String data, long id) {
 		Optional<SockService> sockFiltered = this.clientSocks.stream()
 				.filter((client) -> client.getId() == id)
 				.findFirst();

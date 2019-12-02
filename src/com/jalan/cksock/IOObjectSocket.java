@@ -7,9 +7,8 @@ import java.io.ObjectOutputStream;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-public class IOSocket {
+public class IOObjectSocket {
 	private SockService service;
 	
 	private ObjectOutputStream oos;
@@ -19,11 +18,11 @@ public class IOSocket {
 	
 	private boolean flagOis;
 	
-	private static Logger logger = Logger.getLogger(IOSocket.class);
+	private static Logger logger = Logger.getLogger(IOObjectSocket.class);
 	
-	public IOSocket() {}
+	public IOObjectSocket() {}
 	
-	public IOSocket(SockService service) {
+	public IOObjectSocket(SockService service) {
 		this.service = service;
 	}
 	
@@ -92,25 +91,14 @@ public class IOSocket {
 		
 		this.oisThread.start();
 	}
-	
-	public void sendJson(Object data) throws IOException{
-		logger.debug("sendJson invoked: " + data );
 		
-		
-	}
-	
-	public void sendJson(MessageWrapper2<?> data) throws IOException {
-		logger.debug("sendJson invoked: " + data );
-		
-	}
-	
 	public void sendData(Object data) throws IOException {
 		logger.debug("sendData invoked: " + data);
 		
 		this.oos.writeObject(data);
 	}
 	
-	public void sendData(MessageWrapper2<?> data) throws IOException {
+	public void sendData(String data) throws IOException {
 		logger.debug("sendData invoked: " + data);
 		
 		this.oos.writeObject(data);

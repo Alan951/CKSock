@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 
+import com.google.gson.Gson;
 import com.jalan.cksock.MessageWrapper;
 import com.jalan.cksock.MessageWrapper2;
 import com.jalan.cksock.SockConfig;
@@ -22,7 +23,8 @@ public class TestJsonCommunication {
 		SockLogger.autoConfigure();
 		
 		SockConfig serverConfig = new SockConfig(951);
-		serverConfig.setUseJson(true);
+		
+		Gson gson = new Gson();
 		
 		SockServerService sss = new SockServerService(serverConfig);
 		sss.listen();
@@ -31,9 +33,7 @@ public class TestJsonCommunication {
 		sss.getClientMessagesObserver().subscribe((message) -> {
 			System.out.println(message);
 			
-			if(message.getPayload() instanceof TaskList) {
-				System.out.println("TASK LIST: " + (TaskList)message.getPayload());
-			}
+			System.out.println(gson.fromJson(message.getPayload().toString(), Persona.class));
 		});
 		
 	
@@ -42,18 +42,16 @@ public class TestJsonCommunication {
 		
 		SockService ss = new SockService(clientConfig);
 		ss.getConnectionObserver().filter(conn -> conn.status == SockService.CONNECTED_STATUS).subscribe((conn) -> {
-			MessageWrapper2<String> msg = new MessageWrapper2<String>();
-			msg.setPayload("Hola prro!");
+			Persona persona = new Persona();
+			persona.setEdad(24);
+			persona.setNombre("Jorge Alan");
 			
-			ss.sendDataPlz(msg);
 			
-			MessageWrapper2<TaskList> msg2 = new MessageWrapper2<TaskList>();
 			
-			TaskList taskList = new TaskList(new ArrayList<String>(Arrays.asList("Hola", "Como", "andamos", "Prro", "del", "mal")));
+			String personaJson = gson.toJson(persona);
 			
-			msg2.setPayload(taskList);
-			
-			ss.sendDataPlz(msg2);
+			conn.service.sendData(personaJson);
+		
 		});
 		
 			
