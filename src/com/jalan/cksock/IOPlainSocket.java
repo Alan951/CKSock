@@ -35,6 +35,7 @@ public class IOPlainSocket {
 	private void init() throws IOException{
 		initOUT();
 		initIN();
+		
 	}
 	
 	public boolean isUp() {
@@ -63,6 +64,11 @@ public class IOPlainSocket {
 					
 					data = this.in.readLine();
 					
+					if(data == null) {
+						throw new IOException();
+						//continue;
+					}
+					
 					this.logger.debug("recivied data invoked: " + data);
 					
 					inMessage = new String(Base64.getDecoder().decode(data), StandardCharsets.UTF_8);
@@ -74,7 +80,8 @@ public class IOPlainSocket {
 					this.flagIn = false;
 					
 					try {
-						this.stop();
+						
+						this.service.close(); //Cierre por que los flujos se cerraron. El cliente se desconecto
 					}catch(IOException t) {
 						t.printStackTrace();
 					}
@@ -99,11 +106,14 @@ public class IOPlainSocket {
 		logger.debug("socket stopped invoked");
 		
 		this.flagIn = false;
+
+		//TODO first close out or first?
+		this.closeOut();
+		this.closeIn();
+		//this.service.close();
+		
 		
 		this.inThread.interrupt();
-		
-		this.closeIn();
-		this.closeOut();
 		
 		return true;
 	}
@@ -114,6 +124,7 @@ public class IOPlainSocket {
 	}
 	
 	private void closeIn() throws IOException {
+		//this.service.getSocket().shutdownInput();
 		this.in.close();
 	}
 	

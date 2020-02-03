@@ -9,6 +9,7 @@ import java.rmi.server.SocketSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +37,10 @@ public class SockServerService {
 	
 	public List<SockService> getClients() {
 		return this.clientSocks;
+	}
+	
+	public List<SockService> getActiveClients(){
+		return this.getClients().stream().filter((client) -> client.getSocket().isClosed() != true).collect(Collectors.toList());
 	}
 	
 	public boolean listen() throws BindException{
@@ -74,6 +79,8 @@ public class SockServerService {
 						sockService.setSocket(socket);
 						sockService.setId(idAI);
 						
+						sockService.sendData("Hola!");
+						
 						sockService.getMessageObserver().subscribe((msg) -> {
 							this.logger.debug("NewMessage from " + sockService.toString() + ": " + msg);
 							this.observerClientMessages.onNext(msg);
@@ -92,9 +99,10 @@ public class SockServerService {
 					
 						this.clientSocks.add(sockService);
 						
-						logger.info("New connection: " + sockService);
-						
 						this.observerClientConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, sockService));
+
+						logger.info("New connection: " + sockService);
+					
 						
 						//sockService = null;
 						
@@ -186,6 +194,10 @@ public class SockServerService {
 	
 	public Logger getLogger() {
 		return this.logger;
+	}
+	
+	public boolean isListening() {
+		return this.flagInComConn;
 	}
 	
 	public PublishSubject<MessageWrapper> getClientMessagesObserver(){

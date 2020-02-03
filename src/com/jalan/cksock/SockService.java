@@ -13,6 +13,7 @@ public class SockService {
 	public static final String CONNECTED_STATUS = "CONNECTED";
 	public static final String DISCONNECTED_STATUS = "DISCONNECTED";
 	public static final String ATTEMPT_CONNECT_STATUS = "ATTEMPT_CONNECT";
+	public static final String ERROR_WHEN_ATTEMPT_CONNECT_STATUS = "ERROR_WHEN_ATTEMPT_CONNECT";
 	
 	private Logger logger = Logger.getLogger(SockService.class);
 	
@@ -80,6 +81,7 @@ public class SockService {
 		}catch(IOException e) {
 			//e.printStackTrace();
 			logger.error("Error when attempt connect socket", e);
+			observerConnection.onNext(new ConnectionStatus(SockService.ERROR_WHEN_ATTEMPT_CONNECT_STATUS, this));
 			return false;
 		}
 		
@@ -97,8 +99,7 @@ public class SockService {
 		
 		//this.ioSocket = new IOSocket(this);
 		//this.ioSocket.start();
-		this.io = new IOPlainSocket(this);
-		this.io.start();
+		this.startIO();
 		
 		if(LogManager.getRootLogger().getLevel().toInt() == Level.DEBUG_INT) {
 			logger.debug((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
@@ -108,6 +109,11 @@ public class SockService {
 		
 		
 		this.observerConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, this));
+	}
+	
+	public void startIO() throws IOException {
+		this.io = new IOPlainSocket(this);
+		this.io.start();
 	}
 	
 	private void onDisconnected() throws IOException {
@@ -128,6 +134,10 @@ public class SockService {
 	}
 	
 	public boolean close() throws IOException{
+		if(this.socket.isClosed()) {
+			return true; 
+		}
+		
 		this.observerMessages.onCompleted();
 		
 		logger.debug((this.conf != null ? this.conf.getConnMode() : "00") + " onClose invoked");
