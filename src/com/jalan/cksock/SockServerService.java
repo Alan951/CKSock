@@ -79,8 +79,6 @@ public class SockServerService {
 						sockService.setSocket(socket);
 						sockService.setId(idAI);
 						
-						sockService.sendData("Hola!");
-						
 						sockService.getMessageObserver().subscribe((msg) -> {
 							this.logger.debug("NewMessage from " + sockService.toString() + ": " + msg);
 							this.observerClientMessages.onNext(msg);
