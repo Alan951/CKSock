@@ -3,17 +3,11 @@ package com.jalan.cksock;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.apache.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class IOPlainSocket implements IIOSocket {
 	private SockService service;

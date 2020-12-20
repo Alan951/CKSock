@@ -3,12 +3,10 @@ package com.jalan.cksock;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.SocketException;
 
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class IOObjectSocket {
 	private SockService service;
