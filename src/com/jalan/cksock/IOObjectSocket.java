@@ -64,7 +64,7 @@ public class IOObjectSocket {
 						if(readObject == null)
 							break;
 						logger.debug("inMessage IOSocket: " + readObject);
-						if(this.service.getConf() != null && this.service.getConf().isUseJson() && (readObject instanceof String)) {
+						if(this.service.getConf() != null && (readObject instanceof String)) {
 							readObject = new Gson().fromJson((String) readObject, MessageWrapper.class);
 						}
 						

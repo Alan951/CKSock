@@ -7,7 +7,8 @@ public class SockConfig {
 	public boolean attemptConnect;
 	public int attemptTimes;
 	public boolean autoConnect;
-	public boolean useJson;
+	public int timeLapsePerIntent = 1000 * 3; //3 seconds
+	public IOMode ioMode = IOMode.PLAIN;
 	
 	public static final int SERVER_MODE = 0;
 	public static final int CLIENT_MODE = 1;
@@ -36,13 +37,21 @@ public class SockConfig {
 		this.autoConnect = autoConnect;
 		this.connMode = CLIENT_MODE;
 	}
-	
-	public boolean isUseJson() {
-		return useJson;
+
+	public int getTimeLapsePerIntent() {
+		return timeLapsePerIntent;
 	}
 
-	public void setUseJson(boolean useJson) {
-		this.useJson = useJson;
+	public void setTimeLapsePerIntent(int timeLapsePerIntent) {
+		this.timeLapsePerIntent = timeLapsePerIntent;
+	}
+
+	public IOMode getIoMode() {
+		return ioMode;
+	}
+
+	public void setIoMode(IOMode ioMode) {
+		this.ioMode = ioMode;
 	}
 
 	public String getAddress() {
@@ -101,10 +110,19 @@ public class SockConfig {
 		this.connMode = connMode;
 	}
 
+	
+	
 	@Override
 	public String toString() {
-		return "Config [address=" + address + ", port=" + port + ", attemptConnect=" + attemptConnect
-				+ ", attempt_times=" + attemptTimes + "]";
+		return "SockConfig [connMode=" + connMode + ", address=" + address + ", port=" + port + ", attemptConnect="
+				+ attemptConnect + ", attemptTimes=" + attemptTimes + ", autoConnect=" + autoConnect
+				+ ", timeLapsePerIntent=" + timeLapsePerIntent + ", ioMode=" + ioMode + "]";
+	}
+
+
+
+	public enum IOMode {
+		PLAIN, OBJECT
 	}
 	
 }

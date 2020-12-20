@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class IOPlainSocket {
+public class IOPlainSocket implements IIOSocket {
 	private SockService service;
 	
 	private BufferedReader in;
@@ -31,12 +31,20 @@ public class IOPlainSocket {
 		this.service = service;
 	}
 	
-	public boolean itsUp() {
-		return false;
+	public boolean isUp() {
+		boolean isUp = false;
+		
+		if(this.flagIn)
+			isUp = true;
+		
+		
+		return isUp;
 	}
 	
-	public void start() throws IOException{
+	public boolean start() throws IOException{
 		this.initStreams();
+		
+		return true;
 	}
 	
 	private void initStreams() throws IOException {
@@ -81,15 +89,24 @@ public class IOPlainSocket {
 		this.inThread.start();
 	}
 	
-	public void sendData(String data) throws IOException {
-		data = new String(Base64.getEncoder().encode(data.getBytes(StandardCharsets.UTF_8)));
-		logger.debug("sendData invoked: " + data);
+	public boolean sendData(Object data) throws IOException {
+		//TODO: Manejar correctamente estos errores con handlers personalizados.
+		if(!(data instanceof String)) {
+			return false;
+		}
+		
+		String dataStr = (String) data;
+		
+		data = new String(Base64.getEncoder().encode(dataStr.getBytes(StandardCharsets.UTF_8)));
+		logger.debug("sending data... " + data);
 		
 		this.out.println(data);
+		
+		return true;
 	}
 	
 	public boolean stop() throws IOException {
-		logger.debug("socket stopped invoked");
+		logger.debug("socket stopped");
 		
 		this.flagIn = false;		
 		this.closeIn();

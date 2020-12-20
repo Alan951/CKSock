@@ -60,22 +60,17 @@ public class SockServerService {
 						
 						SockService sockService = new SockService();
 						
-						if(this.sockConfig.isUseJson()) {
-							SockConfig conf = new SockConfig();
-							conf.setUseJson(true);
-							
-							sockService.setConfig(conf);
-						}else {
-							SockConfig conf = new SockConfig();
-							conf.setConnMode(-1);
-							sockService.setConfig(conf);
-						}
+						
+						SockConfig conf = new SockConfig();
+						conf.setConnMode(-1);
+						sockService.setConfig(conf);
+						
 						
 						sockService.setSocket(socket);
 						sockService.setId(idAI);
 						
 						sockService.getMessageObserver().subscribe((msg) -> {
-							this.logger.debug("NewMessage from " + sockService.toString() + ": " + msg);
+							this.logger.debug("new message from " + sockService.toString() + ": " + msg);
 							this.observerClientMessages.onNext(msg);
 						});
 						
@@ -91,14 +86,10 @@ public class SockServerService {
 							
 						});
 					
-						this.clientSocks.add(sockService);
-						
-						logger.info("New connection: " + sockService);
-						
+						this.clientSocks.add(sockService);						
 						this.observerClientConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, sockService));
 						
-						//sockService = null;
-						
+						logger.info("New connection: " + sockService);
 					}catch(SocketException e) {
 						if(!e.getMessage().equals("socket closed")) {
 							e.printStackTrace();
@@ -146,7 +137,6 @@ public class SockServerService {
 			}catch(IOException e) {
 				e.printStackTrace();
 			}
-			
 		}
 	}
 	
@@ -174,7 +164,7 @@ public class SockServerService {
 		Optional<SockService> sockFiltered = this.clientSocks.stream()
 				.filter((client) -> client.getId() == id)
 				.findFirst();
-		
+		//TODO: Validar que el socket se encuentre up
 		if(sockFiltered.isPresent()) {
 			sockFiltered.get().sendDataPlz(data);
 			return true;

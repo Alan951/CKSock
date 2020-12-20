@@ -35,12 +35,12 @@ public class TestConnCycle {
 		sss.getClientConnectionObserver().subscribe((evt) -> {
 			if(evt.status.equals(SockService.CONNECTED_STATUS)) {
 				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+					ss.sendData("Hola");
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				sss.stop();
+				//sss.stop();
 			}
 		});
 	}

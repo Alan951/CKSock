@@ -5,6 +5,8 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
+import com.jalan.cksock.SockConfig.IOMode;
+
 import rx.subjects.PublishSubject;
 
 public class SockService {
@@ -15,7 +17,8 @@ public class SockService {
 	private Logger logger = Logger.getLogger(SockService.class);
 	
 	private Socket socket;
-	private IOObjectSocket ioSocket;
+	//private IOObjectSocket ioSocket;
+	private IIOSocket ioSocket;
 	private SockConfig conf;
 	
 	private long id;
@@ -54,11 +57,9 @@ public class SockService {
 							attempts++;
 						
 						if(conf.attemptTimes == -1 || attempts <= conf.attemptTimes - 1) {	
-							Thread.sleep(1000 * 3); //Tiempo de espera para el siguiente intento
-								
+							Thread.sleep(getConf().timeLapsePerIntent); //Tiempo de espera para el siguiente intento
 						}else {
 							logger.warn("Can't connect to server");
-							
 							break;
 						}
 					}
@@ -92,7 +93,12 @@ public class SockService {
 			this.logger.debug("NewMessage: " + newMessage);
 		});
 		
-		this.ioSocket = new IOObjectSocket(this);
+		//this.ioSocket = new IOObjectSocket(this);
+		
+		if(getConf().getIoMode() == IOMode.PLAIN) {
+			this.ioSocket = new IOPlainSocket(this);
+		}
+		
 		this.ioSocket.start();
 		
 		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
@@ -201,7 +207,7 @@ public class SockService {
 
 	@Override
 	public String toString() {
-		return "SockService [id=" + id + ", remoteIp=" + this.socket.getRemoteSocketAddress() + "]";
+		return "SockService [id=" + id + ", remoteIp=" + this.socket.getRemoteSocketAddress() + ", isUp=" + this.ioSocket.isUp() + "]";
 	}
 	
 	
