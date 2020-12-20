@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class IOSocket {
+public class IOObjectSocket {
 	private SockService service;
 	
 	private ObjectOutputStream oos;
@@ -20,11 +20,11 @@ public class IOSocket {
 	
 	private boolean flagOis;
 	
-	private static Logger logger = Logger.getLogger(IOSocket.class);
+	private static Logger logger = Logger.getLogger(IOObjectSocket.class);
 	
-	public IOSocket() {}
+	public IOObjectSocket() {}
 	
-	public IOSocket(SockService service) {
+	public IOObjectSocket(SockService service) {
 		this.service = service;
 	}
 	
@@ -59,47 +59,28 @@ public class IOSocket {
 				try {
 					logger.info("waiting for messages");
 					
-					while((inMessage = this.ois.readObject() ) != null) {
-						logger.debug("InMessage IOSOCKET: " + inMessage);
-						
-						if(this.service.getConf() != null && this.service.getConf().isUseJson() && inMessage instanceof String) {
-							Gson gson = new Gson();
-							
-							inMessage = gson.fromJson((String)inMessage, MessageWrapper2.class);							
+					while(true) {
+						Object readObject = this.ois.readObject();
+						if(readObject == null)
+							break;
+						logger.debug("inMessage IOSocket: " + readObject);
+						if(this.service.getConf() != null && this.service.getConf().isUseJson() && (readObject instanceof String)) {
+							readObject = new Gson().fromJson((String) readObject, MessageWrapper.class);
 						}
 						
-						service.inComingData(inMessage);
+						this.service.inComingData(readObject);
 					}
 				}catch(ClassNotFoundException e) {
 					logger.error("Error al parsear el mensaje de entrada", e);
-					//e.printStackTrace();
-					
-				}catch(SocketException e) {
-					logger.error((service.getConf() != null ? service.getConf().getConnMode() : "00") + " error " + e);
-					
+				}catch(IOException e2) {
 					this.flagOis = false;
 					try {
-						this.stop();
-					}catch(IOException ioe) {
-						//e.printStackTrace();
-					}
-					
-					
-				}catch(IOException e) {
-					logger.error((service.getConf() != null ? service.getConf().getConnMode() : "00") + " error " + e);		
-					
-					this.flagOis = false;
-					
-					try {
-						//this.stop(); //Stop streams
-						this.service.close();
-					}catch(IOException t) {
-						t.printStackTrace();
+						stop();
+					}catch(IOException e3) {
+						e3.printStackTrace();
 					}
 				}
 			}
-			
-			
 		});
 		
 		this.oisThread.start();
@@ -111,7 +92,7 @@ public class IOSocket {
 		this.oos.writeObject(data);
 	}
 	
-	public void sendData(MessageWrapper2<?> data) throws IOException {
+	public void sendData(MessageWrapper data) throws IOException {
 		logger.debug("sendData invoked: " + data);
 		
 		this.oos.writeObject(data);

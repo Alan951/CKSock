@@ -9,7 +9,6 @@ import com.jalan.cksock.SockConfig;
 import com.jalan.cksock.SockLogger;
 import com.jalan.cksock.SockServerService;
 import com.jalan.cksock.SockService;
-import com.sun.javafx.scene.control.behavior.ScrollBarBehavior.ScrollBarKeyBinding;
 
 public class TestConnCycle {
 

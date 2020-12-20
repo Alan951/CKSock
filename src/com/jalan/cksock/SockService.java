@@ -15,7 +15,7 @@ public class SockService {
 	private Logger logger = Logger.getLogger(SockService.class);
 	
 	private Socket socket;
-	private IOSocket ioSocket;
+	private IOObjectSocket ioSocket;
 	private SockConfig conf;
 	
 	private long id;
@@ -92,7 +92,7 @@ public class SockService {
 			this.logger.debug("NewMessage: " + newMessage);
 		});
 		
-		this.ioSocket = new IOSocket(this);
+		this.ioSocket = new IOObjectSocket(this);
 		this.ioSocket.start();
 		
 		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
