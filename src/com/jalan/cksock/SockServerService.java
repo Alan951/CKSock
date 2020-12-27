@@ -30,7 +30,6 @@ public class SockServerService {
 	public SockServerService(SockConfig sockConfig) {
 		clientSocks = new ArrayList<SockService>();
 		this.sockConfig = sockConfig;
-		
 	}
 	
 	public List<SockService> getClients() {
@@ -59,11 +58,9 @@ public class SockServerService {
 						
 						SockService sockService = new SockService();
 						
-						
 						SockConfig conf = new SockConfig();
 						conf.setConnMode(-1);
 						sockService.setConfig(conf);
-						
 						
 						sockService.setSocket(socket);
 						sockService.setId(idAI);
@@ -84,6 +81,8 @@ public class SockServerService {
 							sockService.getConnectionObserver().onCompleted();
 							
 						});
+						
+						sockService.startIO();
 					
 						this.clientSocks.add(sockService);						
 						this.observerClientConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, sockService));

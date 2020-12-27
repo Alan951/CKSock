@@ -95,17 +95,21 @@ public class SockService {
 			this.logger.debug("NewMessage: " + newMessage);
 		});
 		
-		//this.ioSocket = new IOObjectSocket(this);
+		if(getConf().getConnMode() != SockConfig.CLIENT_SERVER_MODE) {
+			startIO();
+		}
 		
+		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
+		
+		this.observerConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, this));
+	}
+	
+	public void startIO() throws IOException {
 		if(getConf().getIoMode() == IOMode.PLAIN) {
 			this.ioSocket = new IOPlainSocket(this);
 		}
 		
 		this.ioSocket.start();
-		
-		logger.info((this.conf != null ? this.conf.getConnMode() : "00") + " onConnected invoked");
-		
-		this.observerConnection.onNext(new ConnectionStatus(SockService.CONNECTED_STATUS, this));
 	}
 	
 	private void onDisconnected() throws IOException {
