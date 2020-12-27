@@ -13,6 +13,7 @@ public class SockService {
 	public static final String CONNECTED_STATUS = "CONNECTED";
 	public static final String DISCONNECTED_STATUS = "DISCONNECTED";
 	public static final String ATTEMPT_CONNECT_STATUS = "ATTEMPT_CONNECT";
+	public static final String ERROR_WHEN_ATTEMPT_CONNECT_STATUS = "ERROR_WHEN_ATTEMPT_CONNECT";
 	
 	private Logger logger = Logger.getLogger(SockService.class);
 	
@@ -76,8 +77,9 @@ public class SockService {
 		try {
 			this.socket = new Socket(this.conf.getAddress(), this.conf.getPort());
 		}catch(IOException e) {
-			//e.printStackTrace();
 			logger.error("Error when attempt connect socket", e);
+			this.observerConnection.onNext(new ConnectionStatus(ERROR_WHEN_ATTEMPT_CONNECT_STATUS, this));
+
 			return false;
 		}
 		
